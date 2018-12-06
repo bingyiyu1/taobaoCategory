@@ -1,0 +1,270 @@
+env:
+  es6: true
+parserOptions:
+  ecmaVersion: 2017
+  sourceType: module
+  ecmaFeatures:
+    generators: true
+    experimentalObjectRestSpread: true
+    objectLiteralDuplicateProperties: false
+
+extends: gnat
+
+rules:
+  # 使用分号而不是逗号作为语句的结束标志
+  no-sequences: error
+  comma-dangle:
+    - error
+    -
+      arrays: only-multiline
+      objects: only-multiline
+      imports: only-multiline
+      exports: only-multiline
+      functions: never
+
+  radix: warn
+  no-restricted-properties: off
+  no-trailing-spaces: off
+  no-case-declarations: off
+  # 你需要明确知道哪里是动态 require 的资源，但可能并不需要完全禁用该特性
+  import/no-dynamic-require: warn
+  arrow-body-style: off
+  arrow-parens: off
+  strict: off
+  consistent-return: off
+  no-use-before-define: warn
+  no-underscore-dangle: off
+  eol-last: warn
+  func-names: off
+  prefer-arrow-callback: off
+  lines-around-directive: off
+  import/newline-after-import: warn
+  no-shadow: off
+  space-before-function-paren: warn
+  quote-props: warn
+  # 不要使用语言内建对象的原型链方法或属性
+  no-prototype-builtins: off
+  # 如果一个构造器中不包含独有的逻辑，则应当将该构造器删除
+  no-useless-constructor: off
+  # generator 函数声明的 `*` 两侧的空格控制
+  generator-star-spacing: warn
+  # 实例方法中需要使用到 `this`，否则应该指定为静态方法
+  class-methods-use-this: off
+  # 箭头函数的空格控制
+  arrow-spacing: warn
+  # 键名后的空格控制
+  key-spacing: warn
+  # 禁用的语法
+  no-restricted-syntax: off
+  # 使用短写的赋值操作符替代表达式赋值
+  operator-assignment: warn
+  # 对代码块前的空格的控制
+  space-before-blocks: warn
+  # 对逗号两侧的空格的控制
+  comma-spacing: warn
+  # 对关键字两侧的空格的控制
+  keyword-spacing: warn
+  # 对括弧内的空格的控制
+  space-in-parens: warn
+  # 对代码块头尾的空行的控制
+  padded-blocks: warn
+  # 对代码块内部的空格的控制
+  block-spacing: warn
+  # 不在一个表达式中使用多个不同的操作符，例如 `a + b - c`
+  no-mixed-operators: off
+  # 数组方法的回调函数应该有返回值
+  array-callback-return: off
+  object-curly-spacing: warn
+  # 不要包含非必要的 escape
+  no-useless-escape: off
+  # 不要使用空函数
+  no-empty-function: off
+  # Value of 'error' may be overwritten in IE 8 and earlier
+  no-catch-shadow: off
+  # switch-case 语句块中必须出现 default 子句
+  default-case: warn
+  # 不在单行代码中使用没有必要的字符串拼接，例如 `'a' + 'b'`，应该直接写成 `'ab'`
+  no-useless-concat: warn
+  # 使用其他手段替代字符串拼接，例如 `[str1, str2].join('')` 或模板字符串
+  no-path-concat: warn
+  # 不要使用多重赋值语句，例如 `a = b = c;`
+  no-multi-assign: warn
+  # 不使用没有意义的 `return` 语句
+  no-useless-return: warn
+  # 需要在 generator 函数中使用至少一个 `yield` 关键字
+  require-yield: warn
+  # 不添加多余的分号
+  no-extra-semi: warn
+  # 不要使用空代码块，如果一定要用，应该至少在该代码块中添加一行注释：
+  # try {
+  #   fn();
+  # } catch (e) {
+  #   // do nothing
+  # }
+  no-empty: warn
+  # 不要使用多个连续的空格
+  no-multi-spaces: warn
+  # 链式调用中的每一次函数调用应该独占一行
+  newline-per-chained-call:
+    - warn
+    -
+      ignoreChainWithDepth: 5
+  # 类名应当是首字母大写的
+  new-cap: warn
+  # 圈复杂度 21（该指标代表一个函数在执行中出现的条件分支的数量，是
+  # 直接与测试复杂度相关的重要指标。如果一个函数的圈复杂度过高的话，
+  # 则代表着该函数具有很高的测试复杂度。另外，高圈复杂度代表着一个函
+  # 数很可能具备额外的职责，需要进一步拆分）
+  complexity:
+    - error
+    - 21
+  # 不要在 `else` 子句中使用 `return` 语句
+  no-else-return: warn
+  # 在操作符两侧插入空格
+  space-infix-ops: warn
+  # 尽量使用点操作符（例如使用 `obj.key` 而不是 `obj['key']`）
+  dot-notation: warn
+  # 头部包含空格的注释文本
+  spaced-comment: warn
+  # 不要在 `if` 语句或循环语句的条件表达式中写赋值语句，例如 while(flag = i === true)
+  no-cond-assign: warn
+  no-unused-vars: warn
+  quotes: warn
+  # 使用 `let` 和 `const` 替代 `var`，使用该规则后不再需要 `vars-on-top` 和 `one-var` 规则
+  # 且每个变量应该使用一个单独的 `let` 或 `const` 来声明（不适用于结构赋值）。
+  no-var: warn
+  # 每个变量声明应该独占一行
+  one-var-declaration-per-line: warn
+  # 在作用域顶部一次性声明所有 var 变量（如果不是用 var 声明则不受此规则影响）
+  vars-on-top: warn
+  # 在一次 `var` 声明中声明该作用域中所需的所有变量（包含循环声明中的递增量等，常与 `vars-on-top` 结合使用）
+  one-var: warn
+  # 不要在同一个作用域中重复声明一个变量
+  no-redeclare: warn
+  max-len:
+    - warn
+    -
+      code: 120
+      ignoreComments: true
+      ignoreTrailingComments: true
+      ignoreUrls: true
+      ignoreStrings: true
+      ignoreTemplateLiterals: true
+      ignoreRegExpLiterals: true
+  camelcase: warn
+  # 控制逗号的使用风格
+  comma-style: warn
+  # 不要在简写的箭头函数中包含三元表达式，这会造成困惑
+  no-confusing-arrow: warn
+  # 不要返回一个赋值语句
+  no-return-assign: warn
+  # 不要在 JavaScript 中使用 `continue` 来跳出当前循环，这个操作符性能极其低下
+  no-continue: warn
+  # 不可达代码
+  no-unreachable: warn
+  # 在使用参数结构特性时，不要使用空对象映射一个参数，而是显式指定一个参数名来替代整个空对象。
+  # 例如，使用 `fn(query, params)` 替代 `fn({}, params)`
+  no-empty-pattern: warn
+  # 禁止 case 字句落空
+  no-fallthrough: warn
+  # 使用 `===` 和 `!==`，而不是 `==` 和 `!=`
+  eqeqeq: warn
+
+  #### 需要立即修改
+  #### 可自动修复 start ####
+  # 缩进
+  indent:
+    - warn
+    - 2
+    -
+      SwitchCase: 1
+      VariableDeclarator: 1
+      outerIIFEBody: 1
+      FunctionDeclaration:
+        parameters: 1
+        body: 1
+      FunctionExpression:
+        parameters: 1
+        body: 1
+  # 分号
+  semi: warn
+  # 对 yield 关键字两侧空格的控制
+  yield-star-spacing:
+    - warn
+    - both
+  # 控制大括号的使用样式
+  brace-style:
+    - warn
+    - 1tbs
+    -
+      allowSingleLine: false
+  # 对分号周围的空格的控制
+  semi-spacing: warn
+  # 使用 `...` 替代 `.apply()`
+  prefer-spread: warn
+  # 不允许在 `else` 子句中包含一个不包含 `else` 子句的 `if` 语句
+  no-lonely-if: warn
+  # 始终用花括号包裹块级作用域
+  curly:
+    - warn
+    - all
+  # 对象属性应该全部写在同一行，或全部单独成行
+  object-property-newline: warn
+  # 对注释上下两侧的空行的控制
+  lines-around-comment: warn
+  # 对函数调用语句中的空格的控制
+  func-call-spacing: warn
+  # 在函数调用语句中，函数名与括号之间不应该有空格
+  no-spaced-func: warn
+  # Unnecessary use of conditional expression for default assignment
+  no-unneeded-ternary: warn
+  # 对数组字面量中的空格的控制
+  array-bracket-spacing: warn
+  # 对一元操作符（如自增自减）两侧空格的控制
+  space-unary-ops: warn
+  # 对模板字符串中变量引用部分空格的控制
+  template-curly-spacing: warn
+  # 点操作符前不允许出现空格
+  no-whitespace-before-property: warn
+  # 变量结构赋值中，不允许出现无意义的重命名（重命名前后完全一致）
+  no-useless-rename: warn
+  # 实例化时，不允许使用不带括号的简写模式
+  new-parens: warn
+  # 对点操作符位置的控制
+  dot-location: warn
+  # 将函数执行完整移入至用于包裹函数的括号中
+  wrap-iife: warn
+  # 不允许通过不安全的方式使用取反操作符(例如 `!a instanceof Array`)
+  no-unsafe-negation: warn
+  # 禁用"尤达"条件表达式，例如 `'red' === color`(应为 `color === 'red'`), `a < b < c`(应为 `(a < b && b < c)`)
+  yoda: warn
+  # 禁止在函数调用语句中的函数名与括号间跳行
+  no-unexpected-multiline: warn
+  #### 可自动修复 end ####
+  # 不允许包含未声明的变量（如果是必须使用的全局变量，应当在 globals 块中声明）
+  no-undef: error
+  # 在块级作用域中使用 `var` 声明变量（请使用 `let` 或 `const`，如果需要在块级作用域外部使用该变量，应当在该代码块外声明该变量）
+  block-scoped-var: warn
+  # for in 具有天然的缺陷，在使用时应当将循环体包裹在一个 if 语句中，以确保被遍历的属性是被遍历对象的自有属性
+  # 如果需要遍历非自有属性（所有的可枚举属性），则应当在此处关闭该 eslint 规则，或使用第三方工具
+  guard-for-in: warn
+  # 始终使用 spaces 替代 tab
+  no-tabs: warn
+  # 不要给 catch 住的 error 重新赋值
+  no-ex-assign: warn
+  # 不要将一个变量赋值给其本身，例如 `a = a`（但是这样的表达式是可以接受的：`a = a || {}`）
+  no-self-assign: warn
+  # 如果可以直接调用，那么不要使用 `.call()` 或 `.apply()` 这样的间接调用方式
+  no-useless-call: warn
+  # 不要 require 无法被解析至有效资源的路径
+  import/no-unresolved: warn
+  # 不要在循环体中声明函数
+  no-loop-func: error
+  # 不要使用按位运算操作符，例如 `~`
+  no-bitwise: warn
+  # 不允许三元表达式嵌套
+  no-nested-ternary: warn
+  # 不允许在 require 时顺便实例化
+  no-new-require: warn
+  # 禁用不必要的 return await
+  no-return-await: off
