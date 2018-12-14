@@ -1,0 +1,17 @@
+# Created by .ignore support plugin (hsz.mobi)
+
+# IntelliJ project files
+.idea
+
+# coverage
+coverage
+.nyc_output
+
+# dependencies
+node_modules
+
+# others
+admin/public
+.helm
+.proto
+.git*

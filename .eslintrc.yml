@@ -1,5 +1,6 @@
 env:
   es6: true
+  node: true
 parserOptions:
   ecmaVersion: 2017
   sourceType: module
@@ -8,8 +9,7 @@ parserOptions:
     experimentalObjectRestSpread: true
     objectLiteralDuplicateProperties: false
 
-extends: gnat
-
+extends: "eslint-config-airbnb-base"
 rules:
   # 使用分号而不是逗号作为语句的结束标志
   no-sequences: error
@@ -22,7 +22,8 @@ rules:
       exports: only-multiline
       functions: never
 
-  radix: warn
+  # 明确指定 parseInt() 的 radix 参数，即第二个参数，用于指定解析整数时所使用的进制
+  radix: error
   no-restricted-properties: off
   no-trailing-spaces: off
   no-case-declarations: off
@@ -38,7 +39,7 @@ rules:
   func-names: off
   prefer-arrow-callback: off
   lines-around-directive: off
-  import/newline-after-import: warn
+  import/newline-after-import: error
   no-shadow: off
   space-before-function-paren: warn
   quote-props: warn
@@ -53,28 +54,28 @@ rules:
   # 箭头函数的空格控制
   arrow-spacing: warn
   # 键名后的空格控制
-  key-spacing: warn
+  key-spacing: error
   # 禁用的语法
   no-restricted-syntax: off
   # 使用短写的赋值操作符替代表达式赋值
-  operator-assignment: warn
+  operator-assignment: error
   # 对代码块前的空格的控制
   space-before-blocks: warn
   # 对逗号两侧的空格的控制
-  comma-spacing: warn
+  comma-spacing: error
   # 对关键字两侧的空格的控制
   keyword-spacing: warn
   # 对括弧内的空格的控制
   space-in-parens: warn
   # 对代码块头尾的空行的控制
-  padded-blocks: warn
+  padded-blocks: error
   # 对代码块内部的空格的控制
   block-spacing: warn
   # 不在一个表达式中使用多个不同的操作符，例如 `a + b - c`
   no-mixed-operators: off
   # 数组方法的回调函数应该有返回值
   array-callback-return: off
-  object-curly-spacing: warn
+  object-curly-spacing: error
   # 不要包含非必要的 escape
   no-useless-escape: off
   # 不要使用空函数
@@ -117,7 +118,7 @@ rules:
   # 数很可能具备额外的职责，需要进一步拆分）
   complexity:
     - error
-    - 21
+    - 30
   # 不要在 `else` 子句中使用 `return` 语句
   no-else-return: warn
   # 在操作符两侧插入空格
@@ -170,11 +171,10 @@ rules:
   # 使用 `===` 和 `!==`，而不是 `==` 和 `!=`
   eqeqeq: warn
 
-  #### 需要立即修改
-  #### 可自动修复 start ####
+  #### 可自动修复部分 start ####
   # 缩进
   indent:
-    - warn
+    - error
     - 2
     -
       SwitchCase: 1
@@ -187,60 +187,60 @@ rules:
         parameters: 1
         body: 1
   # 分号
-  semi: warn
+  semi: error
   # 对 yield 关键字两侧空格的控制
   yield-star-spacing:
-    - warn
+    - error
     - both
   # 控制大括号的使用样式
   brace-style:
-    - warn
+    - error
     - 1tbs
     -
       allowSingleLine: false
   # 对分号周围的空格的控制
-  semi-spacing: warn
+  semi-spacing: error
   # 使用 `...` 替代 `.apply()`
-  prefer-spread: warn
+  prefer-spread: error
   # 不允许在 `else` 子句中包含一个不包含 `else` 子句的 `if` 语句
-  no-lonely-if: warn
+  no-lonely-if: error
   # 始终用花括号包裹块级作用域
   curly:
-    - warn
+    - error
     - all
   # 对象属性应该全部写在同一行，或全部单独成行
-  object-property-newline: warn
+  object-property-newline: error
   # 对注释上下两侧的空行的控制
-  lines-around-comment: warn
+  lines-around-comment: error
   # 对函数调用语句中的空格的控制
-  func-call-spacing: warn
+  func-call-spacing: error
   # 在函数调用语句中，函数名与括号之间不应该有空格
-  no-spaced-func: warn
+  no-spaced-func: error
   # Unnecessary use of conditional expression for default assignment
-  no-unneeded-ternary: warn
+  no-unneeded-ternary: error
   # 对数组字面量中的空格的控制
-  array-bracket-spacing: warn
+  array-bracket-spacing: error
   # 对一元操作符（如自增自减）两侧空格的控制
-  space-unary-ops: warn
+  space-unary-ops: error
   # 对模板字符串中变量引用部分空格的控制
-  template-curly-spacing: warn
+  template-curly-spacing: error
   # 点操作符前不允许出现空格
-  no-whitespace-before-property: warn
+  no-whitespace-before-property: error
   # 变量结构赋值中，不允许出现无意义的重命名（重命名前后完全一致）
-  no-useless-rename: warn
+  no-useless-rename: error
   # 实例化时，不允许使用不带括号的简写模式
-  new-parens: warn
+  new-parens: error
   # 对点操作符位置的控制
-  dot-location: warn
+  dot-location: error
   # 将函数执行完整移入至用于包裹函数的括号中
-  wrap-iife: warn
+  wrap-iife: error
   # 不允许通过不安全的方式使用取反操作符(例如 `!a instanceof Array`)
-  no-unsafe-negation: warn
+  no-unsafe-negation: error
   # 禁用"尤达"条件表达式，例如 `'red' === color`(应为 `color === 'red'`), `a < b < c`(应为 `(a < b && b < c)`)
-  yoda: warn
+  yoda: error
   # 禁止在函数调用语句中的函数名与括号间跳行
-  no-unexpected-multiline: warn
-  #### 可自动修复 end ####
+  no-unexpected-multiline: error
+  #### 可自动修复部分 end ####
   # 不允许包含未声明的变量（如果是必须使用的全局变量，应当在 globals 块中声明）
   no-undef: error
   # 在块级作用域中使用 `var` 声明变量（请使用 `let` 或 `const`，如果需要在块级作用域外部使用该变量，应当在该代码块外声明该变量）
@@ -249,11 +249,11 @@ rules:
   # 如果需要遍历非自有属性（所有的可枚举属性），则应当在此处关闭该 eslint 规则，或使用第三方工具
   guard-for-in: warn
   # 始终使用 spaces 替代 tab
-  no-tabs: warn
+  no-tabs: error
   # 不要给 catch 住的 error 重新赋值
   no-ex-assign: warn
   # 不要将一个变量赋值给其本身，例如 `a = a`（但是这样的表达式是可以接受的：`a = a || {}`）
-  no-self-assign: warn
+  no-self-assign: error
   # 如果可以直接调用，那么不要使用 `.call()` 或 `.apply()` 这样的间接调用方式
   no-useless-call: warn
   # 不要 require 无法被解析至有效资源的路径
@@ -261,10 +261,10 @@ rules:
   # 不要在循环体中声明函数
   no-loop-func: error
   # 不要使用按位运算操作符，例如 `~`
-  no-bitwise: warn
+  no-bitwise: error
   # 不允许三元表达式嵌套
   no-nested-ternary: warn
   # 不允许在 require 时顺便实例化
-  no-new-require: warn
+  no-new-require: error
   # 禁用不必要的 return await
   no-return-await: off

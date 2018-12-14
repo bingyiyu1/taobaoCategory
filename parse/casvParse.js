@@ -13,9 +13,9 @@ const vid = require('../data/vid');
 const colorPid = '1627207';
 
 class Parser {
-  parse (file) {
+  parse(file) {
     const self = this;
-    return co(function * () {
+    return co(function* () {
       let sheet;
       if (path.extname(file) === '.csv') {
         sheet = yield self.readCSV(file);
@@ -33,7 +33,7 @@ class Parser {
    * @param rows 二维表
    * @returns {*}
    */
-  detectedHeader (headerSign, rows) {
+  detectedHeader(headerSign, rows) {
     let headerIndex;
     rows.some((row, index) => {
       if (headerSign.every(sign => {
@@ -51,14 +51,14 @@ class Parser {
     return headerIndex;
   }
 
-  parseSheet (rows) {
+  parseSheet(rows) {
     const self = this;
     const headerIndex = self.detectedHeader([/title/, /cid/, /seller_cids/], rows);
     const header = rows[headerIndex];
     const body = rows.slice(headerIndex + 2).filter(r => r.length);
     const map = self.findIndexMap(header);
-    const result = body.map(row => {
-      const {productImage, pictures, colorMap} = self.parsePicture(row, map);
+    return body.map(row => {
+      const { productImage, pictures, colorMap } = self.parsePicture(row, map);
       const data = {
         name: row[map.title],
         extra: {
@@ -73,17 +73,16 @@ class Parser {
         support: self.assembleSupport(row, map),
         deliveryAddress: self.assembleDeliveryAddress(row, map),
         price: parseFloat(row[map.price]),
-        stockCount: parseInt(row[map.num]),
+        stockCount: parseInt(row[map.num], 10),
         productLink: `https://item.taobao.com/item.htm?id=${row[map.num_id]}`
       };
-      const {martProducts, skuStyles} = self.parseSkuProps(row, map, productImage, colorMap);
+      const { martProducts, skuStyles } = self.parseSkuProps(row, map, productImage, colorMap);
       data.martProducts = martProducts;
       if (skuStyles) {
         data.skuStyles = skuStyles;
       }
       return data;
     });
-    return result;
   }
 
   /**
@@ -93,23 +92,23 @@ class Parser {
    * @param productImage
    * @param colorMap
    */
-  parseSkuProps (row, map, productImage, colorMap) {
+  parseSkuProps(row, map, productImage, colorMap) {
     const skuProps = row[map.skuProps];
-    const sku_barcode = row[map.sku_barcode] || '';
-    const input_custom_cpv = row[map.input_custom_cpv] || '';
+    const skuBarcode = row[map.skuBarcode] || '';
+    const inputCustomCpv = row[map.inputCustomCpv] || '';
     const cpvMap = {};
-    const sku_barcodeArray = sku_barcode.split(';');
+    const skuBarcodeArray = skuBarcode.split(';');
     const martProducts = [];
     const skuStyles = [];
     // 没有skuProps的情况下直接取值后return
     if (!skuProps) {
       martProducts.push({
         barcode: row[map.barcode],
-        stockCount: parseInt(row[map.num]),
+        stockCount: parseInt(row[map.num], 10),
         price: parseFloat(row[map.price]),
         img: productImage,
       });
-      return {martProducts};
+      return { martProducts };
     }
     // 检查是否二级sku
     const regExp = /[^;:]*:[^;:]*:[^;:]*:[^;:]*:[^;:]*;[^;:]*:[^;:]*;/;
@@ -121,7 +120,7 @@ class Parser {
     let concatSkuPropsArray = [];
     // 如果是2级sku,则两两合并
     if (regExp.test(skuProps)) {
-      const vernier = Array.from({length: Math.floor(skuPropsArray.length / 2)}, (v, k) => k);
+      const vernier = Array.from({ length: Math.floor(skuPropsArray.length / 2) }, (v, k) => k);
       vernier.forEach(v => {
         concatSkuPropsArray.push(`${skuPropsArray[2 * v]}:${skuPropsArray[2 * v + 1]}`);
       });
@@ -132,9 +131,9 @@ class Parser {
     /**
      * 构建自定义属性map
      */
-    if (input_custom_cpv) {
-      const input_custom_cpvArray = input_custom_cpv.split(';');
-      input_custom_cpvArray.forEach(cpv => {
+    if (inputCustomCpv) {
+      const inputCustomCpvArray = inputCustomCpv.split(';');
+      inputCustomCpvArray.forEach(cpv => {
         const [A, B, C] = cpv.split(':');
         cpvMap[A] = cpvMap[A] || {};
         cpvMap[A][B] = C;
@@ -153,9 +152,9 @@ class Parser {
       const martProduct = {};
       const [A, B, C, D, E, F, G] = skuProp.split(':');
       martProduct.price = parseFloat(A);
-      martProduct.stockCount = parseInt(B);
+      martProduct.stockCount = parseInt(B, 10);
       martProduct.serialNo = C;
-      martProduct.barcode = sku_barcodeArray[index];
+      martProduct.barcode = skuBarcodeArray[index];
 
       if (index === 0) {
         if (D === colorPid) {
@@ -170,7 +169,10 @@ class Parser {
       const name1 = vid[E] || (cpvMap[D] && cpvMap[D][E]) || '';
       // 取属性名
       if (!processedVid.includes(E)) {
-        const entry1 = (skuStylel1.needSpecImg && colorMap[E]) ? {name: name1, img: colorMap[E]} : {name: name1};
+        const entry1 = (skuStylel1.needSpecImg && colorMap[E]) ? {
+          name: name1,
+          img: colorMap[E]
+        } : { name: name1 };
         skuStylel1.entries.push(entry1);
         processedVid.push(E);
       }
@@ -193,20 +195,35 @@ class Parser {
         // 取属性名
         name2 = vid[G] || (cpvMap[F] && cpvMap[F][G]) || '';
         if (!processedVid.includes(E)) {
-          const entry2 = (skuStylel2.needSpecImg && colorMap[G]) ? {name: name2, img: colorMap[G]} : {name: name2};
+          const entry2 = (skuStylel2.needSpecImg && colorMap[G]) ? {
+            name: name2,
+            img: colorMap[G] 
+          } : { name: name2 };
           skuStylel2.entries.push(entry2);
         }
       }
       // 添加商品规格
       martProduct.spec = skuStylel2.lv ? (skuStylel2.lv === 1 ? `${name2}/${name1}` : `${name1}/${name2}`) : name1;
       martProduct.skuStyles = [];
-      martProduct.skuStyles.push(skuStylel1.needSpecImg ?
-        {lv: skuStylel1.lv, name: name1, img: martProduct.img} :
-        {lv: skuStylel1.lv, name: name1});
+      martProduct.skuStyles.push(skuStylel1.needSpecImg
+        ? {
+          lv: skuStylel1.lv,
+          name: name1,
+          img: martProduct.img 
+        }
+        : {
+          lv: skuStylel1.lv,
+          name: name1 
+        });
       if (skuStylel2.lv) {
-        martProduct.skuStyles.push(skuStylel2.needSpecImg ?
-          {lv: skuStylel2.lv, name: name2, img: martProduct.img} :
-          {lv: skuStylel2.lv, name: name2});
+        martProduct.skuStyles.push(skuStylel2.needSpecImg ? {
+          lv: skuStylel2.lv,
+          name: name2,
+          img: martProduct.img
+        } : {
+          lv: skuStylel2.lv,
+          name: name2
+        });
       }
       martProducts.push(martProduct);
     });
@@ -215,7 +232,10 @@ class Parser {
         skuStyles.push(s);
       }
     });
-    return {martProducts, skuStyles};
+    return {
+      martProducts,
+      skuStyles 
+    };
   }
 
   /**
@@ -223,7 +243,7 @@ class Parser {
    * @param row
    * @param map
    */
-  parseCateProps (row, map) {
+  parseCateProps(row, map) {
     const cateProps = row[map.cateProps];
     const catePropsArray = cateProps.split(';');
     const brandProp = catePropsArray.find(prop => {
@@ -237,7 +257,7 @@ class Parser {
    * @param row
    * @param map
    */
-  parsePicture (row, map) {
+  parsePicture(row, map) {
     const pictureString = row[map.picture];
     const pictureArray = pictureString.split(';');
     let productImage = '';
@@ -262,7 +282,11 @@ class Parser {
         colorMap[codes[4]] = picture;
       }
     });
-    return {productImage, pictures, colorMap};
+    return {
+      productImage,
+      pictures,
+      colorMap 
+    };
   }
 
   /**
@@ -270,7 +294,7 @@ class Parser {
    * @param row
    * @param map
    */
-  assembleDeliveryAddress (row, map) {
+  assembleDeliveryAddress(row, map) {
     const country = row[map.global_stock_country];
     const province = row[map.location_state];
     const city = row[map.location_city];
@@ -291,9 +315,12 @@ class Parser {
    * @param row
    * @param map
    */
-  assembleSupport (row, map) {
+  assembleSupport(row, map) {
     const refundable = !!row[map.newprepay];
-    return refundable ? {refundable} : {refundable, refundableLabel: '特殊商品，不支持7天无理由退换货'};
+    return refundable ? { refundable } : {
+      refundable,
+      refundableLabel: '特殊商品，不支持7天无理由退换货' 
+    };
   }
 
 
@@ -302,10 +329,10 @@ class Parser {
    * @param header
    * @returns {{title: (number|*), outer_id: (number|*), global_stock_country: (number|*), location_state: (number|*),
    *   location_city: (number|*), price: (number|*), num: (number|*), description: (number|*), cateProps: (number|*),
-   *   picture: (number|*), skuProps: (number|*), input_custom_cpv: (number|*), barcode: (number|*), sku_barcode:
+   *   picture: (number|*), skuProps: (number|*), inputCustomCpv: (number|*), barcode: (number|*), skuBarcode:
    *   (number|*), newprepay: (number|*)}}
    */
-  findIndexMap (header) {
+  findIndexMap(header) {
     return {
       // 商品名称
       title: this.findFirst(header, ['title']),
@@ -332,11 +359,11 @@ class Parser {
       // sku属性
       skuProps: this.findFirst(header, ['skuProps']),
       // 自定义属性
-      input_custom_cpv: this.findFirst(header, ['input_custom_cpv']),
+      inputCustomCpv: this.findFirst(header, ['inputCustomCpv']),
       // 条形码
       barcode: this.findFirst(header, ['barcode']),
       // sku条形码
-      sku_barcode: this.findFirst(header, ['sku_barcode']),
+      skuBarcode: this.findFirst(header, ['skuBarcode']),
       // 退货支持
       newprepay: this.findFirst(header, ['newprepay']),
     };
@@ -347,7 +374,7 @@ class Parser {
    * @param header
    * @param keys - Column names
    */
-  findFirst (header, keys) {
+  findFirst(header, keys) {
     let index;
     for (const key of keys) {
       const i = header.indexOf(key);
@@ -363,7 +390,7 @@ class Parser {
     throw new Error(`excel标题格式不合法: ${header}\t不包含:${keys}`);
   }
 
-  * readCSV (file) {
+  * readCSV(file) {
     return yield new Promise((resolve, reject) => {
       const data = [];
       fs.createReadStream(file)
@@ -371,7 +398,10 @@ class Parser {
         .pipe(iconv.decodeStream('UTF-16'))
         .pipe(iconv.encodeStream('utf-8'))
         // 指定分割符为"\t",由于第一行只有一个元素version 1.00,解析的时候只会解析一列,这里指定了一个1-80的表头（实际属性长度是67）
-        .pipe(csvParser({separator: '\t', headers: Array.from({length: 80}, (v, k) => k.toString())}))
+        .pipe(csvParser({
+          separator: '\t',
+          headers: Array.from({ length: 80 }, (v, k) => k.toString())
+        }))
         .on('data', (row) => {
           data.push(row);
         })

@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node ./bin/www"
+    "start": "node server.js"
   },
   "dependencies": {
     "bluebird": "^3.5.1",
@@ -19,6 +19,12 @@
     "jade": "~1.11.0",
     "lodash": "^4.17.10",
     "morgan": "~1.9.0",
+    "redis": "^2.2.5",
     "superagent": "^3.8.3"
+  },
+  "devDependencies": {
+    "eslint": "^5.10.0",
+    "eslint-config-airbnb-base": "^13.1.0",
+    "eslint-plugin-import": "^2.14.0"
   }
 }
