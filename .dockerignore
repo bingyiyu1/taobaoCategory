@@ -59,3 +59,6 @@ typings/
 
 # next.js build output
 .next
+
+# IntelliJ’s project specific settings files
+.idea
